@@ -295,7 +295,8 @@ export function DottedGlowBackground({
     <div
       ref={containerRef}
       className={className}
-      style={{ position: "absolute", inset: 0 }}
+      // make the dotted background cover the whole viewport and be non-interactive
+      style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: -1 }}
     >
       <canvas
         ref={canvasRef}

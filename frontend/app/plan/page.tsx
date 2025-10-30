@@ -5,8 +5,14 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import Markdown from "react-markdown";
 
+
 const Page = () => {
   const BE_URL = "http://localhost:5000";
+  const WEATHER_API = "http://api.weatherapi.com/v1/forecast.json?key=a94bad0e6ead4ebfac3192902252710&q=goa&days=6&aqi=no&alerts=no";
+
+  // const WEATHER_AI = process.env.WEATHER_API 
+  // q=goa&days=6&aqi=no&alerts=no";
+
   const [destination, setDestination] = useState("");
   const [duration, setDuration] = useState(0);
   const [interests, setInterests] = useState("");
@@ -18,10 +24,15 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const handlePostPlan = async () => {
     const res = await axios.post(`${BE_URL}/api/post-trip`, {
-      title:  destination,
+      title: destination,
       duration: duration,
       description: response,
     });
+  };
+  const getWeatherForecast = async () => {
+    // const res = await axios.get(`${WEATHER_API}&q=${destination}&days=${duration}&aqi=no&alerts=no`);
+    const res = await axios.get(WEATHER_API);
+    console.log(res.data);
   }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,11 +56,10 @@ const Page = () => {
 
     setLoading(false);
   };
-
   return (
     <div className="relative flex min-h-screen w-full px-10 py-10 gap-10">
       <DottedGlowBackground
-        className="pointer-events-none absolute inset-0 opacity-20 dark:opacity-100"
+        className="pointer-events-none overflow-auto absolute inset-0 opacity-20 dark:opacity-100"
         opacity={0.6}
         gap={30}
         radius={2}
@@ -66,7 +76,7 @@ const Page = () => {
       {/* LEFT SIDE - FORM */}
       <div className="flex flex-col justify-center w-1/3">
         <form
-          onSubmit={handleSubmit}
+          // onSubmit={handleSubmit}
           className="backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-white/20 flex flex-col gap-8"
         >
           <h2 className="text-5xl font-bold dark:text-white">Plan Your Trip</h2>
@@ -105,26 +115,41 @@ const Page = () => {
             placeholder="Enter your interests (eg : adventure, culture, food)"
             className="px-3  py-5 h-24 rounded-3xl border border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 focus:ring-2 focus:ring-blue-400 dark:text-white outline-none w-full resize-none"
           />
+          <div className="flex gap-x-8">
+            
           <button
             disabled={loading}
-            className={`px-6 bg-white text-lg font-semibold py-6 z-20 border border-neutral-600 text-black rounded-3xl transition-all
+            onClick={handleSubmit}
+            className={`px-8 bg-white text-lg font-semibold py-6 z-20 border border-neutral-600 text-black rounded-3xl transition-all
     ${loading ? "cursor-not-allowed opacity-50 bg-white" : "hover:scale-105"}
   `}
           >
             {loading ? "AI is thinking..." : "Generate Itinerary"}
           </button>
+          <button
+            disabled={loading}
+            onClick={getWeatherForecast}
+            className={`px-8 bg-white text-lg font-semibold py-6 z-20 border border-neutral-600 text-black rounded-3xl transition-all
+    ${loading ? "cursor-not-allowed opacity-50 bg-white" : "hover:scale-105"}
+  `}
+          >
+            {loading ? "Fetching Updates..." : "Weather Forecast"}
+          </button>
+          </div>
         </form>
       </div>
 
       {/* RIGHT SIDE - RESPONSE */}
-      <div className="w-2/3 h-[80vh] overflow-y-auto pr-5">
+      <div className="w-2/3 h-[90vh] overflow-y-auto pr-5">
         {loading && (
           <div className="flex justify-center items-center text-lg mt-10 dark:text-neutral-200">
             ⏳ AI is thinking...
           </div>
         )}
         {!response && (
-          <div className="mt-4 p-6 rounded-xl bg-white/50 dark:bg-neutral-900/40  shadow-lg border border-white/20">Your itinerary will appear here once it's generated.</div>
+          <div className="mt-4 p-6 rounded-xl bg-white/50 dark:bg-neutral-900/40  shadow-lg border border-white/20">
+            Your itinerary will appear here once it's generated.
+          </div>
         )}
         {!loading && response && (
           <div className="mt-4 p-6 rounded-xl bg-white/50 dark:bg-neutral-900/40 backdrop-blur-lg shadow-lg border border-white/20">
@@ -137,12 +162,17 @@ const Page = () => {
           </div>
         )}
       </div>
-        {!loading && response && (
-          <button onClick={handlePostPlan} className="top-0 right-4 bg-white p-3 rounded-xl cursor-pointer  text-black backdrop-blur-lg h-fit shadow-lg  "
-          >
-            Save!
-          </button>
-          )}
+      <div>
+        
+      </div>
+      {!loading && response && (
+        <button
+          onClick={handlePostPlan}
+          className="top-0 right-4 bg-white p-3 rounded-xl cursor-pointer  text-black backdrop-blur-lg h-fit shadow-lg  "
+        >
+          Save!
+        </button>
+      )}
     </div>
   );
 };

@@ -24,7 +24,7 @@ const page = () => {
   }, []);
 
   return (
-    <div className="w-full p-5">
+    <div className="w-full p-5 overflow-auto relative min-h-screen">
      <DottedGlowBackground
                className="pointer-events-none absolute inset-0 opacity-20 dark:opacity-100"
                opacity={0.6}
