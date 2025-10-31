@@ -5,18 +5,15 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import Markdown from "react-markdown";
 
-
 const Page = () => {
   const BE_URL = "http://localhost:5000";
-  const WEATHER_API = "http://api.weatherapi.com/v1/forecast.json?key=a94bad0e6ead4ebfac3192902252710&q=goa&days=6&aqi=no&alerts=no";
-
-  // const WEATHER_AI = process.env.WEATHER_API 
-  // q=goa&days=6&aqi=no&alerts=no";
+  const WEATHER_API = process.env.NEXT_PUBLIC_WEATHER_API;
 
   const [destination, setDestination] = useState("");
   const [duration, setDuration] = useState(0);
   const [interests, setInterests] = useState("");
   const [response, setResponse] = useState<string | null>(null);
+  const [weatherData, setWeatherData] = useState<any | null>(null);
   const [errors, setErrors] = useState<{
     destination?: string;
     duration?: string;
@@ -29,11 +26,21 @@ const Page = () => {
       description: response,
     });
   };
-  const getWeatherForecast = async () => {
-    // const res = await axios.get(`${WEATHER_API}&q=${destination}&days=${duration}&aqi=no&alerts=no`);
-    const res = await axios.get(WEATHER_API);
-    console.log(res.data);
-  }
+  const getWeatherForecast = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `${WEATHER_API}&q=${destination}&days=${duration}&aqi=no&alerts=no`
+      );
+      setWeatherData(res.data);
+      console.log("Weather Data:", res.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching weather data:", error);
+    }
+    // const res = await axios.get(WEATHER_API);
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -88,7 +95,7 @@ const Page = () => {
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               placeholder="Enter your destination"
-              className="px-3  py-5 border border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 rounded-3xl focus:ring-2 focus:ring-blue-400 dark:text-white outline-none w-full"
+              className="px-3  py-4 border border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 rounded-3xl focus:ring-2 focus:ring-blue-400 dark:text-white outline-none w-full"
             />
             {errors.destination && (
               <p className="text-red-500 text-sm mt-1">{errors.destination}</p>
@@ -102,7 +109,7 @@ const Page = () => {
               value={duration === 0 ? "" : duration}
               onChange={(e) => setDuration(Number(e.target.value))}
               placeholder="Enter duration (in days)"
-              className="px-3  py-5  border border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 rounded-3xl focus:ring-2 focus:ring-blue-400 dark:text-white outline-none w-full"
+              className="px-3  py-4  border border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 rounded-3xl focus:ring-2 focus:ring-blue-400 dark:text-white outline-none w-full"
               min={0}
             />
             {errors.duration && (
@@ -113,42 +120,42 @@ const Page = () => {
           <textarea
             onChange={(e) => setInterests(e.target.value)}
             placeholder="Enter your interests (eg : adventure, culture, food)"
-            className="px-3  py-5 h-24 rounded-3xl border border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 focus:ring-2 focus:ring-blue-400 dark:text-white outline-none w-full resize-none"
+            className="px-3  py-4 h-24 rounded-3xl border border-gray-300 dark:border-neutral-700 dark:bg-neutral-800 focus:ring-2 focus:ring-blue-400 dark:text-white outline-none w-full resize-none"
           />
           <div className="flex gap-x-8">
-            
-          <button
-            disabled={loading}
-            onClick={handleSubmit}
-            className={`px-8 bg-white text-lg font-semibold py-6 z-20 border border-neutral-600 text-black rounded-3xl transition-all
+            <button
+              disabled={loading}
+              onClick={handleSubmit}
+              className={`px-6 bg-white text-lg font-semibold py-4 z-20 border border-neutral-600 text-black rounded-3xl transition-all
     ${loading ? "cursor-not-allowed opacity-50 bg-white" : "hover:scale-105"}
   `}
-          >
-            {loading ? "AI is thinking..." : "Generate Itinerary"}
-          </button>
-          <button
-            disabled={loading}
-            onClick={getWeatherForecast}
-            className={`px-8 bg-white text-lg font-semibold py-6 z-20 border border-neutral-600 text-black rounded-3xl transition-all
+            >
+              {loading ? "AI is thinking..." : "Generate Itinerary"}
+            </button>
+            <button
+              disabled={loading}
+              onClick={getWeatherForecast}
+              className={`px-6 bg-white text-lg font-semibold py-4 z-20 border border-neutral-600 text-black rounded-3xl transition-all              46 z-20 border border-neutral-600 text-black rounded-3xl transition-all
     ${loading ? "cursor-not-allowed opacity-50 bg-white" : "hover:scale-105"}
   `}
-          >
-            {loading ? "Fetching Updates..." : "Weather Forecast"}
-          </button>
+            >
+              {loading ? "Fetching Updates..." : "Weather Forecast"}
+            </button>
           </div>
         </form>
       </div>
 
       {/* RIGHT SIDE - RESPONSE */}
-      <div className="w-2/3 h-[90vh] overflow-y-auto pr-5">
+      <div className="w-2/3 h-[90vh] overflow-y-auto pr-5 flex items-center justify-center flex-col">
         {loading && (
           <div className="flex justify-center items-center text-lg mt-10 dark:text-neutral-200">
             ⏳ AI is thinking...
           </div>
         )}
-        {!response && (
+        {!response  && !weatherData && (
           <div className="mt-4 p-6 rounded-xl bg-white/50 dark:bg-neutral-900/40  shadow-lg border border-white/20">
-            Your itinerary will appear here once it's generated.
+            Your Itinerary/Weather forecast will appear here once it's
+            generated.
           </div>
         )}
         {!loading && response && (
@@ -161,9 +168,55 @@ const Page = () => {
             </div>
           </div>
         )}
-      </div>
       <div>
-        
+        {!loading && weatherData && (
+          <div className="mt-4 p-6 w-full items-center rounded-xl bg-white/50 dark:bg-neutral-900/40 backdrop-blur-lg shadow-lg border border-white/20">
+            <h2 className="text-2xl font-bold mb-4 dark:text-white">
+              Weather Forecast
+            </h2>
+            <div >
+              <h2 className="text-white/80 text-xl">
+                Location
+              </h2>
+              <div className="flex flex-col items-center">
+
+               
+                <p className="text-lg font-semibold text-center dark:text-white">
+                  {weatherData.location?.name}, {weatherData.location?.region} {" "}
+                  {weatherData.location?.country}
+                </p>
+                </div>
+            </div>
+            <div>
+              <h2 className="text-white/80 text-xl  mt-4">
+                Forecast for the next {duration} days
+            </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+            {
+              weatherData.forecast.forecastday.map((day: any, index: number) => (
+                <div key={index} className="mt-4 p-4 rounded-lg  bg-white/30 dark:bg-neutral-800/30 backdrop-blur-md shadow-md border border-white/10">
+                  <h3 className="text-xl font-semibold mb-2 dark:text-white">
+                    {day.date}
+                  </h3>
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={day.day.condition.icon}
+                      alt={day.day.condition.text}
+                    />
+                    <p className="text-lg font-semibold dark:text-white">
+                      {day.day.condition.text}
+                    </p>
+                  </div>  
+                  <p className="mt-2 text-white/80">
+                    Avg Temperature: {day.day.avgtemp_c}°C
+                  </p>
+                  </div>
+              ))}
+              </div>
+            </div>
+          </div>
+        )}
+        </div>
       </div>
       {!loading && response && (
         <button
