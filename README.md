@@ -22,5 +22,7 @@
 - Database: MongoDB
 
 ## TODO : 
-- [X] Weather API Integration
+- [X] Weather API Integration in frontend
 - [ ] Streaming Responses from Gemini API
+- [ ] make AI aware of Weather data + prompt engineering
+- [ ] deploy the backend
