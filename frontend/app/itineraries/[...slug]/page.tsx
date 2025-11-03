@@ -1,5 +1,6 @@
 "use client";
 import DottedGlowBackground from "@/components/ui/dotted-glow-background";
+import { FloatingNavDemo } from "@/components/ui/Navbar";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Markdown from "react-markdown";
@@ -21,6 +22,7 @@ const page = () => {
   
   return (
     <div className="relative min-h-screen w-full">
+      <FloatingNavDemo/>
       <DottedGlowBackground
         className="pointer-events-none absolute inset-0 min-h-full opacity-20 dark:opacity-100"
         opacity={0.6}

@@ -1,5 +1,7 @@
 "use client";
 import DottedGlowBackground from '@/components/ui/dotted-glow-background';
+import Home from '@/components/ui/Home';
+import { FloatingNavDemo } from '@/components/ui/Navbar';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React from 'react'
@@ -42,7 +44,7 @@ const page = () => {
   <h1 className="text-4xl font-bold mb-8 dark:text-white mt-5 ">
     Saved Itineraries
   </h1>
-
+    <FloatingNavDemo/>
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {itineraries.map((itinerary) => (
       <div

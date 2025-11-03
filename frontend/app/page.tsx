@@ -2,6 +2,7 @@
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
 import Button from "@/components/ui/Button";
 import DottedGlowBackground from "@/components/ui/dotted-glow-background";
+import { FloatingNavDemo } from "@/components/ui/Navbar";
 import TopButton from "@/components/ui/TopButton";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
@@ -27,7 +28,7 @@ export default function Home() {
       />
 
       <TopButton  />
-
+    <FloatingNavDemo />
       <div className="relative z-10 mt-0 flex flex-col items-center justify-center space-y-8">
         <h2 className="text-center text-2xl font-bold text-neutral-800 md:text-5xl lg:text-9xl dark:text-neutral-300">
           Sathi Yatri AI
@@ -43,13 +44,13 @@ export default function Home() {
         <div className="flex flex-wrap justify-center gap-6 pt-5">
           <button
             onClick={() => router.push("/plan")}
-            className="px-8 py-6 text-lg font-semibold rounded-3xl border border-neutral-600 bg-white text-black hover:scale-[1.04] transition duration-200 shadow-sm"
+            className="px-8 py-6 text-lg font-semibold rounded-3xl border border-neutral-600 bg-white/80 text-black hover:scale-[1.04] transition duration-200 shadow-sm"
           >
             Plan your trip now
           </button>
           <button
             onClick={() => router.push("/itineraries")}
-            className="px-8 py-6 text-lg font-semibold rounded-3xl border border-neutral-600 bg-white text-black hover:scale-[1.04] transition duration-200 shadow-sm"
+            className="px-8 py-6 text-lg font-semibold rounded-3xl border border-neutral-600 bg-white/80 text-black hover:scale-[1.04] transition duration-200 shadow-sm"
           >
             Precurated itineraries
           </button>

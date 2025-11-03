@@ -23,6 +23,7 @@
 
 ## TODO : 
 - [X] Weather API Integration in frontend
-- [ ] Streaming Responses from Gemini API
-- [ ] make AI aware of Weather data + prompt engineering
+- [X] Streaming Responses from Gemini API
+- [X] prompt engineering
+- [ ] Auth 😭
 - [ ] deploy the backend

@@ -12,15 +12,38 @@ interface Details{
     duration: number;
     interests: string | undefined;
 }
-const plantripController = async (req : { body: Details },res : any )=>{ 
-    // req
-    const {destination,duration,interests}=req.body;
-    console.log("Received trip planning request:", destination, duration, interests);
-    const response = await ai.models.generateContent({
+const plantripController = async (req: { body: Details }, res: any) => {
+  const { destination, duration, interests } = req.body;
+  console.log("Received trip planning request:", destination, duration, interests);
+  // headers for SSE
+  res.setHeader("Content-Type", "text/plain; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  const prompt = `Create a detailed ${duration}-day trip plan for ${destination} focusing on these interests: ${interests}. 
+  Format the plan as a day-wise itinerary with activities and places to visit.`;
+
+  const response = await ai.models.generateContentStream({
     model: "gemini-2.5-flash",
-    contents: "You are a travel planning assistant. Create a detailed "+duration+" day trip plan for "+destination+" focusing on these interests: "+interests + ". Format the plan as a day-wise itinerary with activities and places to visit.",
+    contents: prompt,
+    config: {
+      systemInstruction:
+        "You are a travel planning assistant. Your plans should be detailed and engaging. Return markdown format for better readability, and include emojis to make it attractive.",
+    },
   });
-  console.log(response.text);
-  res.send(response.text);
-}
+
+  try {
+    for await (const chunk of response) {
+      const text = chunk?.text;
+      if (text) {
+        res.write(text);   
+      }
+    }
+  } catch (error) {
+    console.error("Stream error:", error);
+  } finally {
+    res.end();  
+  }
+};
+
 export default plantripController;
